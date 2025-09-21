@@ -45,7 +45,7 @@
   </style>
 </head>
 <body>
-  <!-- Navbar -->
+ 
   <header class="navbar">
     <div class="container">
       <div class="brand">My Personal Blog</div>
@@ -57,12 +57,12 @@
     </div>
   </header>
 
-  <!-- Search bar -->
+  
   <div class="container" style="padding-top:1rem;">
     <input id="search" type="search" placeholder="Search posts..." aria-label="Search posts" style="width:100%;max-width:300px;">
   </div>
 
-  <!-- Blog -->
+  
   <main class="container" id="home">
     <section id="posts" class="posts-grid" aria-live="polite"></section>
 
@@ -74,14 +74,14 @@
     </aside>
   </main>
 
-  <!-- About section -->
+  
   <section id="about" class="page container">
     <h2>About Me</h2>
     <p>Hello! 👋 I’m a passionate writer and developer who loves to share ideas about coding, productivity, and life lessons. This blog is my space to document thoughts, projects, and personal notes.</p>
     <p>When I’m not writing, you’ll find me exploring new technologies, reading books, or enjoying a good coffee ☕.</p>
   </section>
 
-  <!-- Contact section -->
+  
   <section id="contact" class="page container">
     <h2>Contact</h2>
     <p>If you’d like to reach out, feel free to drop me an email:</p>
@@ -111,7 +111,7 @@
   </template>
 
   <script>
-    // Posts data (7 sample blog posts)
+    
     const postsData = [
       { "title": "Welcome — My First Post", "slug": "welcome-my-first-post", "date": "2025-09-01", "tags": ["personal","intro"], "excerpt": "Short intro to the blog and what I'll write about.", "content": "<p>Hello! This is my first post...</p>", "image": "https://picsum.photos/seed/1/800/400" },
       { "title": "Writing Tips for Beginners", "slug": "writing-tips-for-beginners", "date": "2025-08-20", "tags": ["writing","tips"], "excerpt": "Practical, short tips to improve your writing practice.", "content": "<p>Keep a daily habit...</p>", "image": "https://picsum.photos/seed/2/800/400" },
@@ -194,7 +194,7 @@
       renderPosts();
     });
 
-    // Handle "read more" routing
+    
     window.addEventListener('hashchange', () => {
       const slug = location.hash.slice(1);
       if (!slug) return renderPosts();
@@ -215,3 +215,4 @@
   </script>
 </body>
 </html>
+
