@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Responsive Personal Blog</title>
+  <style>
+    :root {
+      --max-width: 1000px;
+      --accent: #2b6cb0;
+      --muted: #6b7280;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; color: #111; background:#fafafa;}
+    .container { max-width: var(--max-width); margin: 0 auto; padding: 1rem; }
+    .navbar { background: #2b6cb0; color: #fff; position: sticky; top: 0; z-index: 10; }
+    .navbar .container { display:flex; align-items:center; justify-content:space-between; }
+    .navbar .brand { font-size: 1.2rem; font-weight:bold; }
+    .navbar nav a { color: #fff; text-decoration:none; margin-left:1rem; }
+    .navbar nav a:hover { text-decoration:underline; }
+    .top-nav input { padding:.5rem .75rem; border:1px solid #ddd; border-radius:8px; min-width:180px; }
+    main.container { display: grid; grid-template-columns: 1fr 260px; gap: 1.25rem; padding-top: 1.25rem; }
+    .posts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .post-card { display: flex; flex-direction: column; border: 1px solid #eee; border-radius: 10px; overflow: hidden; background: #fff; }
+    .post-image { height: 150px; width: 100%; object-fit: cover; }
+    .post-body { padding: 0.85rem; }
+    .post-title { margin: .25rem 0; font-size: 1.05rem; }
+    .post-meta { color: var(--muted); font-size: .85rem; margin: 0.25rem 0; }
+    .post-excerpt { color: #333; margin: 0.6rem 0; }
+    .read-more { display: inline-block; margin-top: .5rem; text-decoration: none; color: var(--accent); }
+    .sidebar .widget { background: #fff; padding: 0.75rem; border: 1px solid #eee; border-radius: 10px; }
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .tags button { border: 1px solid #ddd; background: transparent; padding: .35rem .5rem; border-radius: 6px; font-size: .85rem; cursor: pointer; }
+    section.page { background:#fff; margin:2rem auto; padding:1.5rem; border-radius:10px; border:1px solid #eee; }
+    section.page h2 { margin-top:0; }
+    .site-footer { padding: 1rem 0; text-align: center; color: var(--muted); border-top: 1px solid #f1f5f9; margin-top: 2rem; }
+    @media (max-width: 900px) {
+      main.container { grid-template-columns: 1fr; }
+      .sidebar { order: 2; }
+    }
+    @media (max-width: 420px) {
+      .post-image { height: 120px; }
+      .brand { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container">
+      <div class="brand">My Personal Blog</div>
+      <nav>
+        <a href="#">Home</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Search bar -->
+  <div class="container" style="padding-top:1rem;">
+    <input id="search" type="search" placeholder="Search posts..." aria-label="Search posts" style="width:100%;max-width:300px;">
+  </div>
+
+  <!-- Blog -->
+  <main class="container" id="home">
+    <section id="posts" class="posts-grid" aria-live="polite"></section>
+
+    <aside class="sidebar">
+      <div class="widget">
+        <h3>Tags</h3>
+        <div id="tags" class="tags"></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- About section -->
+  <section id="about" class="page container">
+    <h2>About Me</h2>
+    <p>Hello! 👋 I’m a passionate writer and developer who loves to share ideas about coding, productivity, and life lessons. This blog is my space to document thoughts, projects, and personal notes.</p>
+    <p>When I’m not writing, you’ll find me exploring new technologies, reading books, or enjoying a good coffee ☕.</p>
+  </section>
+
+  <!-- Contact section -->
+  <section id="contact" class="page container">
+    <h2>Contact</h2>
+    <p>If you’d like to reach out, feel free to drop me an email:</p>
+    <p><strong>Email:</strong> <a href="mailto:yourname@example.com">yourname@example.com</a></p>
+    <p>Or connect with me on social media:</p>
+    <ul>
+      <li><a href="https://twitter.com/" target="_blank">Twitter</a></li>
+      <li><a href="https://linkedin.com/" target="_blank">LinkedIn</a></li>
+      <li><a href="https://github.com/" target="_blank">GitHub</a></li>
+    </ul>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">© <span id="year"></span> My Personal Blog</div>
+  </footer>
+
+  <template id="post-template">
+    <article class="post-card">
+      <img class="post-image" alt="post image">
+      <div class="post-body">
+        <h2 class="post-title"></h2>
+        <p class="post-meta"></p>
+        <p class="post-excerpt"></p>
+        <a class="read-more" href="#">Read more</a>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    // Posts data (7 sample blog posts)
+    const postsData = [
+      { "title": "Welcome — My First Post", "slug": "welcome-my-first-post", "date": "2025-09-01", "tags": ["personal","intro"], "excerpt": "Short intro to the blog and what I'll write about.", "content": "<p>Hello! This is my first post...</p>", "image": "https://picsum.photos/seed/1/800/400" },
+      { "title": "Writing Tips for Beginners", "slug": "writing-tips-for-beginners", "date": "2025-08-20", "tags": ["writing","tips"], "excerpt": "Practical, short tips to improve your writing practice.", "content": "<p>Keep a daily habit...</p>", "image": "https://picsum.photos/seed/2/800/400" },
+      { "title": "Top 5 JavaScript Tricks", "slug": "top-5-js-tricks", "date": "2025-08-15", "tags": ["coding","javascript"], "excerpt": "Five useful tricks to make your JavaScript cleaner and faster.", "content": "<p>Arrow functions...</p>", "image": "https://picsum.photos/seed/3/800/400" },
+      { "title": "Why Simplicity Wins in Blogging", "slug": "simplicity-wins", "date": "2025-08-10", "tags": ["blogging","minimalism"], "excerpt": "Complex platforms aren’t always better.", "content": "<p>A simple workflow means less distraction...</p>", "image": "https://picsum.photos/seed/4/800/400" },
+      { "title": "Daily Routine of a Developer", "slug": "daily-routine-developer", "date": "2025-07-28", "tags": ["personal","developer"], "excerpt": "How I manage work, breaks, and coding flow.", "content": "<p>Morning planning...</p>", "image": "https://picsum.photos/seed/5/800/400" },
+      { "title": "How to Stay Motivated to Write", "slug": "stay-motivated-writing", "date": "2025-07-15", "tags": ["writing","motivation"], "excerpt": "Tips on keeping the habit of writing alive.", "content": "<p>Set small goals...</p>", "image": "https://picsum.photos/seed/6/800/400" },
+      { "title": "Tools I Use Every Day", "slug": "tools-i-use", "date": "2025-07-01", "tags": ["tools","productivity"], "excerpt": "Apps and tools I rely on daily.", "content": "<p>VSCode, Notion, GitHub...</p>", "image": "https://picsum.photos/seed/7/800/400" }
+    ];
+
+    const state = { posts: [], filtered: [], activeTag: null, q: '' };
+    const el = {
+      postsContainer: document.getElementById('posts'),
+      tagsContainer: document.getElementById('tags'),
+      searchInput: document.getElementById('search'),
+      yearSpan: document.getElementById('year'),
+      template: document.getElementById('post-template')
+    };
+    el.yearSpan.textContent = new Date().getFullYear();
+
+    function init() {
+      state.posts = postsData.sort((a,b) => new Date(b.date) - new Date(a.date));
+      state.filtered = state.posts;
+      renderPosts();
+      renderTags();
+    }
+
+    function renderPosts() {
+      el.postsContainer.innerHTML = '';
+      const list = state.filtered.filter(p => matchesQuery(p, state.q));
+      if (!list.length) { el.postsContainer.innerHTML = '<p>No posts found.</p>'; return; }
+      list.forEach(p => {
+        const tpl = el.template.content.cloneNode(true);
+        tpl.querySelector('.post-image').src = p.image;
+        tpl.querySelector('.post-title').textContent = p.title;
+        tpl.querySelector('.post-meta').textContent = `${formatDate(p.date)} • ${p.tags.join(', ')}`;
+        tpl.querySelector('.post-excerpt').textContent = p.excerpt;
+        tpl.querySelector('.read-more').href = `#${p.slug}`;
+        el.postsContainer.appendChild(tpl);
+      });
+    }
+
+    function renderTags() {
+      const tags = new Set(state.posts.flatMap(p => p.tags));
+      el.tagsContainer.innerHTML = '';
+      el.tagsContainer.appendChild(createTagButton('All', null));
+      tags.forEach(t => el.tagsContainer.appendChild(createTagButton(t)));
+    }
+
+    function createTagButton(text, tag=null) {
+      const btn = document.createElement('button');
+      btn.textContent = text;
+      btn.addEventListener('click', () => {
+        state.activeTag = tag;
+        applyFilters();
+      });
+      return btn;
+    }
+
+    function applyFilters() {
+      state.filtered = state.activeTag ? state.posts.filter(p => p.tags.includes(state.activeTag)) : state.posts;
+      renderPosts();
+    }
+
+    function matchesQuery(post, q) {
+      if (!q) return true;
+      const s = q.toLowerCase();
+      return post.title.toLowerCase().includes(s) ||
+             post.excerpt.toLowerCase().includes(s) ||
+             post.content.toLowerCase().includes(s);
+    }
+
+    function formatDate(d) {
+      const dt = new Date(d);
+      return dt.toLocaleDateString(undefined,{ year:'numeric', month:'short', day:'numeric' });
+    }
+
+    el.searchInput.addEventListener('input', e => {
+      state.q = e.target.value.trim();
+      renderPosts();
+    });
+
+    // Handle "read more" routing
+    window.addEventListener('hashchange', () => {
+      const slug = location.hash.slice(1);
+      if (!slug) return renderPosts();
+      const post = state.posts.find(p => p.slug === slug);
+      if (!post) return;
+      el.postsContainer.innerHTML = `
+        <article class="post-full">
+          <h1>${post.title}</h1>
+          <p class="post-meta">${formatDate(post.date)} • ${post.tags.join(', ')}</p>
+          <img src="${post.image}" alt="${post.title}" style="max-width:100%;border-radius:8px;margin:1rem 0;">
+          <div>${post.content}</div>
+          <p><a href="#">← Back to posts</a></p>
+        </article>
+      `;
+    });
+
+    init();
+  </script>
+</body>
+</html>
